@@ -27,4 +27,7 @@
 {% end %}
 
 {% block custom-js %}
+	{% module JSModule([
+		static_url("js/application.js")
+	]) %}
 {% end %}

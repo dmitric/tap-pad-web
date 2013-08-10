@@ -23,9 +23,7 @@
 		  {% end %}
 
 		  <div class="page-container">
-				{% block body %}
-				{% end %}
-
+				{% block body %}{% end %}
 				<footer class="wrapper">
 					<div class="container">
 						<div class="footer-content">
@@ -37,7 +35,8 @@
 				</footer>
 			</div>
 			<!-- >PUT  ga <-->
-			{% block js %}{% end %}
+			{% block js %}
+			{% end %}
 			{% block custom-js %}{% end %}
 	</body>
 </html>
