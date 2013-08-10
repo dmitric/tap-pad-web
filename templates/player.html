@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block body %}
+	<div class="wrapper">
+		<div class="container player-container" max-width="722px">
+			<table class="player">
+				{% for i in xrange(0,8) %}
+					<tr class="player-row">
+					{% for j in xrange(0,8) %}
+						<td class="player-button">
+							<div class="inner-button"></div>
+						</td>
+					{% end %}
+					</tr>
+				{% end %}
+			</table>
+			<br/>
+		</div>
+	</div>
+{% end %}
