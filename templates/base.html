@@ -36,7 +36,11 @@
 			</div>
 			<!-- >PUT  ga <-->
 			{% block js %}
+				{% module JSModule([
+						static_url("js/jquery.min.js")
+					]) %}
 			{% end %}
+
 			{% block custom-js %}{% end %}
 	</body>
 </html>

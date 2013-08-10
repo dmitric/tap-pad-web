@@ -22,7 +22,7 @@ class TapPadApplication(tornado.web.Application):
             },
         }
         tornado.web.Application.__init__(self, [
-            tornado.web.url(r"/", PadHandler, name="player"),
+            tornado.web.url(r"/([^/]*)/?", PadHandler, name="player"),
         ], **settings)
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -30,8 +30,8 @@ class BaseHandler(tornado.web.RequestHandler):
 
 
 class PadHandler(BaseHandler):
-	def get(self):
-		self.render("player.html")
+	def get(self, start_position=None):
+		self.render("player.html", start_position=start_position)
 
 
 class CSSModule(tornado.web.UIModule):
