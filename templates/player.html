@@ -7,7 +7,7 @@
 				{% for i in xrange(0,8) %}
 					<tr class="player-row">
 					{% for j in xrange(0,8) %}
-						<td class="player-button">
+						<td class="player-button" data-row="{{i}}" data-column="{{j}}">
 							<div class="inner-button"></div>
 						</td>
 					{% end %}
@@ -17,4 +17,14 @@
 			<br/>
 		</div>
 	</div>
+{% end %}
+
+
+{% block more-header %}
+<div class="controls" style="float:right;">
+	<div class="play-control">Play</div>
+</div>
+{% end %}
+
+{% block custom-js %}
 {% end %}

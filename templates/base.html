@@ -16,9 +16,8 @@
 	    {% block header %}
 		    <div id="header-wrapper" class="wrapper">
 		      <div id="header" class="container">
-		        <h1 id="logo">
-		          <a href="/"><span>Tap Pad</span></a>
-		        </h1>
+		        <h1 id="logo"><a href="/"><span>Tap Pad</span></a></h1>
+		        {% block more-header %}{% end %}
 		      </div>
 		    </div>
 		  {% end %}
@@ -37,6 +36,8 @@
 					</div>
 				</footer>
 			</div>
-
+			<!-- >PUT  ga <-->
+			{% block js %}{% end %}
+			{% block custom-js %}{% end %}
 	</body>
 </html>
