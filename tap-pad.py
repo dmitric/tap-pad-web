@@ -51,7 +51,7 @@ def main():
     else:
         path = os.path.join(os.path.dirname(__file__), "settings.py")
         tornado.options.parse_config_file(path)
-    TapPadApplication().listen(options.port)
+    TapPadApplication().listen(os.environ.get("PORT", options.port))
     tornado.ioloop.IOLoop.instance().start()
 
 
