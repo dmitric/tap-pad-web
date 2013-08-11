@@ -37,12 +37,15 @@ class Atom
 		@vertical = true
 		@id = IdGenerator.next()
 		@moves = 0
+		@collisions = 0
 	
 	changeDirection: () ->
 		@direction *= -1
+		@collisions++
 
 	collide: () ->
 		@vertical = !@vertical
+		@collisions++
 
 	move: () ->
 		if @vertical
@@ -71,6 +74,8 @@ class TapPad
 		@paused = true
 		@speed = 100
 		@grid = []
+		@collisonsLimit = 100 #kill off older atoms
+		@movesLimit = 300
 		@player = new AudioSource 30
 
 		for i in [0..@yMax]
@@ -79,15 +84,21 @@ class TapPad
 				@grid[i][j] = null
 
 	addAtom: (x, y) ->
+		@addAtomWithDirections x, y, 1, 1
+
+	addAtomWithDirections: (x, y, direction, vertical) ->
 		if not @isValidMove x, y
 			console.log "Did not add, out of bounds"
 		else
 			atom = new Atom x,y
+			atom.direction = if direction == 1 then 1 else -1
+			atom.vertical = if vertical == 1 then true else false
 			@atoms.push atom
 			if @grid[y][x] == null
 				@grid[y][x] = {}
 			@grid[y][x]["#{ atom.id }"] = atom
 			@renderAtXandY x,y
+
 
 	toggle:() ->
 		@paused = !@paused 
@@ -164,6 +175,18 @@ class TapPad
 			#just one automaton
 			$cell.removeClass "collision"
 			$cell.addClass "single"
+
+	purgeOldAtoms: () ->
+		kill_off = (atom for atom in @atoms when \
+			atom.collisions > @collisonsLimit \
+			or atom.moves > @movesLimit)
+		
+		for atom in kill_off
+			delete @grid[atom.y][atom.x]["#{atom.id}"]
+
+		@atoms = (atom for atom in @atoms when \
+			atom.collisions < @collisonsLimit \
+			or atom.moves < @movesLimit)
 	
 	render: () ->
 		for j in [0..@yMax]
@@ -173,6 +196,9 @@ class TapPad
 
 	step: () ->
 		if !@paused and @atoms.length > 0
+
+			#lets kill old atoms
+			@purgeOldAtoms()
 			#lets move ours atoms!
 			for atom in @atoms
 				@moveAtom atom
@@ -188,10 +214,10 @@ class TapPad
 			#render the colors
 			@render()
 
-$ ->
-	#create a new 8x8 tap pad
-	tapPad = new TapPad 8,8
+#create a new 8x8 tap pad and attach it to the window
+window.tapPad = new TapPad 8,8			
 
+$ ->
 	playToggle = () ->
 		tapPad.toggle()
 		$(".play-control").toggleClass "pause"

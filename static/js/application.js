@@ -59,12 +59,15 @@ Atom = (function() {
     this.vertical = true;
     this.id = IdGenerator.next();
     this.moves = 0;
+    this.collisions = 0;
   }
   Atom.prototype.changeDirection = function() {
-    return this.direction *= -1;
+    this.direction *= -1;
+    return this.collisions++;
   };
   Atom.prototype.collide = function() {
-    return this.vertical = !this.vertical;
+    this.vertical = !this.vertical;
+    return this.collisions++;
   };
   Atom.prototype.move = function() {
     if (this.vertical) {
@@ -101,6 +104,8 @@ TapPad = (function() {
     this.paused = true;
     this.speed = 100;
     this.grid = [];
+    this.collisonsLimit = 100;
+    this.movesLimit = 300;
     this.player = new AudioSource(30);
     for (i = 0, _ref = this.yMax; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
       this.grid[i] = [];
@@ -110,11 +115,16 @@ TapPad = (function() {
     }
   }
   TapPad.prototype.addAtom = function(x, y) {
+    return this.addAtomWithDirections(x, y, 1, 1);
+  };
+  TapPad.prototype.addAtomWithDirections = function(x, y, direction, vertical) {
     var atom;
     if (!this.isValidMove(x, y)) {
       return console.log("Did not add, out of bounds");
     } else {
       atom = new Atom(x, y);
+      atom.direction = direction === 1 ? 1 : -1;
+      atom.vertical = vertical === 1 ? true : false;
       this.atoms.push(atom);
       if (this.grid[y][x] === null) {
         this.grid[y][x] = {};
@@ -222,6 +232,37 @@ TapPad = (function() {
       return $cell.addClass("single");
     }
   };
+  TapPad.prototype.purgeOldAtoms = function() {
+    var atom, kill_off, _i, _len;
+    kill_off = (function() {
+      var _i, _len, _ref, _results;
+      _ref = this.atoms;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        atom = _ref[_i];
+        if (atom.collisions > this.collisonsLimit || atom.moves > this.movesLimit) {
+          _results.push(atom);
+        }
+      }
+      return _results;
+    }).call(this);
+    for (_i = 0, _len = kill_off.length; _i < _len; _i++) {
+      atom = kill_off[_i];
+      delete this.grid[atom.y][atom.x]["" + atom.id];
+    }
+    return this.atoms = (function() {
+      var _j, _len2, _ref, _results;
+      _ref = this.atoms;
+      _results = [];
+      for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
+        atom = _ref[_j];
+        if (atom.collisions < this.collisonsLimit || atom.moves < this.movesLimit) {
+          _results.push(atom);
+        }
+      }
+      return _results;
+    }).call(this);
+  };
   TapPad.prototype.render = function() {
     var i, j, _ref, _results;
     _results = [];
@@ -240,6 +281,7 @@ TapPad = (function() {
   TapPad.prototype.step = function() {
     var atom, _i, _j, _len, _len2, _ref, _ref2;
     if (!this.paused && this.atoms.length > 0) {
+      this.purgeOldAtoms();
       _ref = this.atoms;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         atom = _ref[_i];
@@ -258,9 +300,9 @@ TapPad = (function() {
   };
   return TapPad;
 })();
+window.tapPad = new TapPad(8, 8);
 $(function() {
-  var playToggle, runLoop, tapPad;
-  tapPad = new TapPad(8, 8);
+  var playToggle, runLoop;
   playToggle = function() {
     tapPad.toggle();
     $(".play-control").toggleClass("pause");

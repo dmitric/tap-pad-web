@@ -32,8 +32,24 @@
 		return size;
 	};
 </script>
+
 {% module JSModule([
 	static_url("js/application.min.js") if not settings["debug"]
 		else static_url("js/application.js") 
 	]) %}
+
+	{% if start_position %}
+		<script>
+		$(function(){
+			{% for pos in start_position %}
+				tapPad.addAtomWithDirections({{ ",".join(pos) }})
+			{% end %}
+			$playControl = $(".play-control")
+			$playControl.toggleClass("pause")
+			$playControl.toggleClass("play")
+			$playControl.show()
+		})
+		</script>
+	{% end %}
+
 {% end %}
