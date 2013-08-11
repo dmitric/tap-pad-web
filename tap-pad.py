@@ -85,7 +85,10 @@ class BaseHandler(tornado.web.RequestHandler):
 class PadHandler(BaseHandler):
   def get(self, start_params=""):
     start_position = self.parse_position(start_params)
-    self.render("player.html", start_position=start_position)
+    theme = None
+    if start_params = "drake":
+      theme = {"name": "Drake", "clips": [] }
+    self.render("player.html", theme=theme, start_position=start_position)
 
 class LinkGenerationHandler(BaseHandler):
   def get(self):

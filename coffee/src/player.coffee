@@ -279,6 +279,7 @@ $ ->
 		tapPad.generateShareLink (result) ->
 			$sl = $(".share-link")
 			$sl.val window.location.host + result["link"]
+			$sl.show()
 
 	runLoop = () ->
 		tapPad.step()
