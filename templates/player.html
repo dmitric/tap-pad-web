@@ -21,7 +21,7 @@
 		</div>
 	</div>
 {% end %}
-{% block more-header %}<div class="controls"><div class="play-control pause" style="display:none;"></div></div>{% end %}
+{% block more-header %}<div class="controls"><div id="play-control" class="pause" style="display:none;"></div></div>{% end %}
 {% block custom-js %}
 <script>
 	Object.size = function(obj) {
@@ -41,10 +41,8 @@
 	{% if start_position %}
 		<script>
 		$(function(){
-			{% for pos in start_position %}
-				tapPad.addAtomWithDirections({{ ",".join(pos) }})
-			{% end %}
-			$playControl = $(".play-control")
+			{% for pos in start_position %}tapPad.addAtomWithDirections({{ ",".join(pos) }}){% end %}
+			$playControl = $("#play-control")
 			$playControl.toggleClass("pause")
 			$playControl.toggleClass("play")
 			$playControl.show()

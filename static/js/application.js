@@ -302,18 +302,24 @@ TapPad = (function() {
 })();
 window.tapPad = new TapPad(8, 8);
 $(function() {
-  var playToggle, runLoop;
+  var audio, button, onClick, playToggle, runLoop;
   playToggle = function() {
     tapPad.toggle();
-    $(".play-control").toggleClass("pause");
-    return $(".play-control").toggleClass("play");
+    $("#play-control").toggleClass("pause");
+    return $("#play-control").toggleClass("play");
   };
-  $(".play-control").on("click", function(e) {
+  $("#play-control").on("click", function(e) {
     return playToggle();
   });
+  audio = document.getElementById('audio0');
+  button = document.getElementById('play-control');
+  onClick = function() {
+    return audio.play();
+  };
+  button.addEventListener('click', onClick, false);
   $(".player-button").on("click", function(e) {
     var x, y;
-    $(".play-control").show();
+    $("#play-control").show();
     if (tapPad.atoms.length === 0) {
       tapPad.play();
     }

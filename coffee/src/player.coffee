@@ -220,19 +220,26 @@ window.tapPad = new TapPad 8,8
 $ ->
 	playToggle = () ->
 		tapPad.toggle()
-		$(".play-control").toggleClass "pause"
-		$(".play-control").toggleClass "play"
+		$("#play-control").toggleClass "pause"
+		$("#play-control").toggleClass "play"
 
-	$(".play-control").on "click", (e) ->
+	$("#play-control").on "click", (e) ->
 		#toggle the play state when we click the control
 		playToggle()
 
+	audio = document.getElementById('audio0')
+	button = document.getElementById('play-control')
+
+	onClick = () ->
+		audio.play()
+
+	button.addEventListener('click', onClick, false)
 
 	$(".player-button").on "click", (e) ->
 		#if we click a player-button, add a new atom to the pad
 		#at the position we clicked
 
-		$(".play-control").show()
+		$("#play-control").show()
 		if tapPad.atoms.length == 0
 			tapPad.play()
 		y = +$(this).data "row"
