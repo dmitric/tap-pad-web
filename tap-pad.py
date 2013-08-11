@@ -92,6 +92,13 @@ class PadHandler(BaseHandler):
         "name": "Drake",
         "clips": [
           "http://www.therapboard.com/audio/drake_2.mp3",
+          "http://www.therapboard.com/audio/drake_3.mp3",
+          "http://www.therapboard.com/audio/drake_4.mp3",
+          "http://www.therapboard.com/audio/drake_5.mp3",
+          "http://www.therapboard.com/audio/weezy_14.mp3",
+          "http://www.therapboard.com/audio/weezy_29.mp3",
+          "http://www.therapboard.com/audio/weezy_16.mp3",
+          "http://www.therapboard.com/audio/weezy_25.mp3"
           ]
       }
     self.render("player.html", theme=theme, start_position=start_position)
