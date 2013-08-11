@@ -46,3 +46,9 @@ Here's an example: http://tap-pad.herokuapp.com/100151560522043100242
 All of the code ([web](https://github.com/dmitric/tap-pad-web) and [iOS](https://github.com/dmitric/tap-pad-ios)) is open sourced under MIT so have fun.
 
 PS. I read somewhere that Torontonians are statistically more likely to enjoy Drake, so I made a little something just for you [here](http://tap-pad.herokuapp.com/drake)
+
+
+iOS version
+--------------
+
+There's also an iOS version [here](http://github.com/dmitric/tap-pad-ios)
