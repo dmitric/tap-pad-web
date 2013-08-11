@@ -83,12 +83,10 @@ class TapPad
 			console.log "Did not add, out of bounds"
 		else
 			atom = new Atom x,y
-			console.log "Added #{atom.id}"
 			@atoms.push atom
 			if @grid[y][x] == null
 				@grid[y][x] = {}
 			@grid[y][x]["#{ atom.id }"] = atom
-			console.log "Added atom at #{x} #{y}"
 			@renderAtXandY x,y
 
 	toggle:() ->
@@ -104,7 +102,6 @@ class TapPad
 		! (x > @xMax or x < 0 or y > @yMax or y < 0)
 	
 	moveAtom: (atom) ->
-		console.log "#{atom.id}"
 		curX = atom.x
 		curY = atom.y
 		nextX = atom.nextX()
@@ -150,9 +147,8 @@ class TapPad
 			for i in [0..@xMax]
 				sizeOfCell = Object.size(@grid[j][i])
 				if sizeOfCell > 1
-					for idKey in @grid[j][i]
-						console.log "#{idKey}" crashed
-						@grid[j][i][idKey].collide()
+					for idKey, atom of @grid[j][i]
+						atom.collide()
 	
 	renderAtXandY: (x,y) ->
 		sizeOfCell = Object.size(@grid[y][x])
@@ -176,47 +172,55 @@ class TapPad
 				
 
 	step: () ->
-		if !@paused and @atoms.length
-			console.log "STEP"
-			console.log "------------"
-
-			console.log @grid
-			
+		if !@paused and @atoms.length > 0
 			#lets move ours atoms!
 			for atom in @atoms
 				@moveAtom atom
-				console.log atom
 			
-			#deal with head on collisions -> <- from move we just did
-			for atom in @atoms
-				@manageHeadOnCollisions atom
-			if @atoms.length > 0
+			if @atoms.length > 1
+				#deal with head on collisions -> <- from move we just did
+				for atom in @atoms
+					@manageHeadOnCollisions atom
+				
 				#deal with the case when atoms landed on the same point -> x <-
 				@manageIntersections()
-				#render the colors
-				@render()
-
-tapPad = new TapPad 8,8
-
-runLoop = () ->
-	tapPad.step()
-
-setInterval runLoop, tapPad.speed
+			
+			#render the colors
+			@render()
 
 $ ->
-	$(".play-control").on "click", (e) ->
+	#create a new 8x8 tap pad
+	tapPad = new TapPad 8,8
+
+	playToggle = () ->
 		tapPad.toggle()
 		$(".play-control").toggleClass "pause"
 		$(".play-control").toggleClass "play"
 
+	$(".play-control").on "click", (e) ->
+		#toggle the play state when we click the control
+		playToggle()
+
 
 	$(".player-button").on "click", (e) ->
+		#if we click a player-button, add a new atom to the pad
+		#at the position we clicked
+
 		$(".play-control").show()
 		if tapPad.atoms.length == 0
 			tapPad.play()
 		y = +$(this).data "row"
 		x = +$(this).data "col"
 		tapPad.addAtom x, y
+
+	runLoop = () ->
+		tapPad.step()
+
+	$(window).on "keypress", (e) ->
+		if e.keyCode == 32 or e.which == 32
+			playToggle()
+
+	setInterval runLoop, tapPad.speed
 
 
 
