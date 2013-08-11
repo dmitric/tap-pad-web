@@ -83,25 +83,33 @@ class BaseHandler(tornado.web.RequestHandler):
 
 
 class PadHandler(BaseHandler):
+  @tornado.web.removeslash
   def get(self, start_params=""):
     start_position = self.parse_position(start_params)
     theme = None
-    if start_params = "drake":
-      theme = {"name": "Drake", "clips": [] }
+    if start_params == "drake":
+      theme = {
+        "name": "Drake",
+        "clips": [
+          "http://www.therapboard.com/audio/drake_2.mp3",
+          ]
+      }
     self.render("player.html", theme=theme, start_position=start_position)
 
 class LinkGenerationHandler(BaseHandler):
+  @tornado.web.removeslash
   def get(self):
     atoms = json_decode(self.get_argument("atoms", "[]"))
     resulting_link = self.generate_position_link(atoms)
     self.redirect(self.reverse_url("player", link) \
-      if link != "" else "/")
-
+      if link != "" else "")
+  
+  @tornado.web.removeslash
   def post(self):
     atoms = json_decode(self.get_argument("atoms", "[]"))
     link = self.generate_position_link(atoms)
     self.finish({"link": self.reverse_url("player", link) \
-      if link != "" else "/"})
+      if link != "" else ""})
 
 
 class CSSModule(tornado.web.UIModule):

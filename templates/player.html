@@ -1,8 +1,19 @@
 {% extends "base.html" %}
 
+
+{% block themename %}
+	{{ theme["name"] if theme else "Tap" }}
+{% end %}
+
 {% block body %}
-	{% for note in xrange(0,8) %}
-	<audio id="audio{{note}}" src="http://s3.amazonaws.com/automatajs/{{note}}.wav" preload="auto"></audio>
+	{% if theme %}
+	{% for i, clip in enumerate(theme.get("clips", [])) %}
+		<audio id="audio{{i}}" src="{{clip}}" preload="auto"></audio>
+		{% end %}
+	{% else %}
+		{% for note in xrange(0,8) %}
+		<audio id="audio{{note}}" src="http://s3.amazonaws.com/automatajs/{{note}}.wav" preload="auto"></audio>
+		{% end %}
 	{% end %}
 	<div class="wrapper">
 		<div class="container player-container" max-width="722px">
