@@ -94,14 +94,14 @@ class LinkGenerationHandler(BaseHandler):
     atoms = json_decode(self.get_argument("atoms", "[]"))
     resulting_link = self.generate_position_link(atoms)
     self.redirect(self.reverse_url("player", link) \
-      if link != "" else "/")
+      if link != "" else "")
 
   @tornado.web.removeslash
   def post(self):
     atoms = json_decode(self.get_argument("atoms", "[]"))
     link = self.generate_position_link(atoms)
     self.finish({"link": self.reverse_url("player", link) \
-      if link != "" else "/"})
+      if link != "" else ""})
 
 
 class CSSModule(tornado.web.UIModule):
