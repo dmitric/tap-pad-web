@@ -26,7 +26,9 @@ class TapPadApplication(tornado.web.Application):
         ], **settings)
 
 class BaseHandler(tornado.web.RequestHandler):
-	pass
+    def render_string(self, template, **kwargs):
+        kwargs.update({ "settings": self.settings })
+        return tornado.web.RequestHandler.render_string(self, template, **kwargs)
 
 
 class PadHandler(BaseHandler):
