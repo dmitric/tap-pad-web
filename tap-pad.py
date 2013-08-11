@@ -2,6 +2,7 @@ import tornado.web
 from tornado.options import define, options
 import os
 import re
+from tornado.escape import json_decode
 
 define("config")
 define("debug", default=False)
@@ -27,6 +28,7 @@ class TapPadApplication(tornado.web.Application):
             },
         }
         tornado.web.Application.__init__(self, [
+            tornado.web.url(r"/link/?", LinkGenerationHandler, name="link-gen"),
             tornado.web.url(r"/([^/]*)/?", PadHandler, name="player"),
         ], **settings)
 
@@ -37,16 +39,13 @@ class BaseHandler(tornado.web.RequestHandler):
 
   def parse_position(self, start_params):
     start_position = None
-    start_params = re.sub(ur"\D", "", start_params.lower())
+    start_params = re.sub(ur"\D", "", start_params)
     try:
       while len(start_params) > 2:
         if not start_position:
           start_position = []
         pos = [ char for char in start_params[0:3]]
-        if pos[2] == "0":
-          pos[2] = "1"
-          pos.append("1")
-        elif pos[2] == "1":
+        if pos[2] == "1":
           pos[2] = "0"
           pos.append("1")
         elif pos[2] == "2":
@@ -55,22 +54,46 @@ class BaseHandler(tornado.web.RequestHandler):
         elif pos[2] == "3":
           pos[2] = "0"
           pos.append("0")
-        start_params = start_params[3:]
+        else:
+          pos[2] = "1"
+          pos.append("1")
         start_position.append(pos)
+        start_params = start_params[3:]
     except Exception as e:
       pass
     return start_position
 
+  def generate_position_link(self, atoms):
+    resulting_link = ""
+    try:
+      for atom in atoms:
+        print atom
+        gen = "%d%d" % (atom["x"], atom["y"])
+        if atom["vertical"]:
+          gen = "%s%d" % (gen, 0 if atom["direction"] > 0 else 1) 
+        else:
+          gen = "%s%d" % (gen, 2 if atom["direction"] > 0 else 3)
+        resulting_link = "%s%s" % (resulting_link, gen)
+    except e as Exception:
+      pass
+    return resulting_link
+
 
 class PadHandler(BaseHandler):
   def get(self, start_params=""):
-    start_position = None
-    start_params = start_params.lower()
-    if start_params == "drake":
-      print "YUPP"
-    else:
-      start_position = self.parse_position(start_params)
+    start_position = self.parse_position(start_params)
     self.render("player.html", start_position=start_position)
+
+class LinkGenerationHandler(BaseHandler):
+  def get(self):
+    atoms = json_decode(self.get_argument("atoms", "[]"))
+    resulting_link = self.generate_position_link(atoms)
+    self.redirect(self.reverse_url("player", resulting_link))
+
+  def post(self):
+    atoms = json_decode(self.get_argument("atoms", "[]"))
+    resulting_link = self.generate_position_link(atoms)
+    self.finish({"link": resulting_link})
 
 
 class CSSModule(tornado.web.UIModule):

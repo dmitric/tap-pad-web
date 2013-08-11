@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="author" content="">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-		<title>{% block title %}Tap Pad{% end %}</title>
+		<title>{% block title %}Tap Pad by {{ settings["creator"] }}{% end %}</title>
 		{% module CSSModule([
 			static_url("css/bootstrap.min.css"),
 			static_url("css/style.min.css") ])
@@ -28,7 +28,7 @@
 					<div class="container">
 						<div class="footer-content">
 							<h3 class="about">About Tap Pad</h3>
-							<p>Musicular automatons</p>
+							<p>Musicular automatons.</p>
 							<p>Made for Music Hack Day Toronto, 2013 by
 								<a href="{{ settings['creator_homepage'] }}">
 									{{ settings['creator'] }}

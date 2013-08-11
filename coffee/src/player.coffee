@@ -65,6 +65,13 @@ class Atom
 		if @vertical
 			nY += @direction
 		nY
+	stringify: () ->
+		JSON.stringify {
+			x: @x ,
+			y: @y,
+			vertical: @vertical,
+			direction: @direction 
+		}
 
 class TapPad
 	constructor: (xMax, yMax) ->
@@ -192,7 +199,9 @@ class TapPad
 		for j in [0..@yMax]
 			for i in [0..@xMax]
 				@renderAtXandY i, j
-				
+
+	stringify: () ->
+		JSON.stringify (atom.stringify() for atom in @atoms)			
 
 	step: () ->
 		if !@paused and @atoms.length > 0
@@ -220,8 +229,13 @@ window.tapPad = new TapPad 8,8
 $ ->
 	playToggle = () ->
 		tapPad.toggle()
-		$("#play-control").toggleClass "pause"
-		$("#play-control").toggleClass "play"
+		if tapPad.paused
+			$("#play-control").removeClass "pause"
+			$("#play-control").addClass "play"
+		else
+			$("#play-control").removeClass "play"
+			$("#play-control").addClass "pause"
+		$("#play-control").show()
 
 	$("#play-control").on "click", (e) ->
 		#toggle the play state when we click the control
@@ -230,7 +244,6 @@ $ ->
 	$(".player-button").on "click", (e) ->
 		#if we click a player-button, add a new atom to the pad
 		#at the position we clicked
-
 		$("#play-control").show()
 		if tapPad.atoms.length == 0
 			tapPad.play()

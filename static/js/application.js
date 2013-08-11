@@ -93,6 +93,14 @@ Atom = (function() {
     }
     return nY;
   };
+  Atom.prototype.stringify = function() {
+    return JSON.stringify({
+      x: this.x,
+      y: this.y,
+      vertical: this.vertical,
+      direction: this.direction
+    });
+  };
   return Atom;
 })();
 TapPad = (function() {
@@ -278,6 +286,19 @@ TapPad = (function() {
     }
     return _results;
   };
+  TapPad.prototype.stringify = function() {
+    var atom;
+    return JSON.stringify((function() {
+      var _i, _len, _ref, _results;
+      _ref = this.atoms;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        atom = _ref[_i];
+        _results.push(atom.stringify());
+      }
+      return _results;
+    }).call(this));
+  };
   TapPad.prototype.step = function() {
     var atom, _i, _j, _len, _len2, _ref, _ref2;
     if (!this.paused && this.atoms.length > 0) {
@@ -305,8 +326,14 @@ $(function() {
   var playToggle, runLoop;
   playToggle = function() {
     tapPad.toggle();
-    $("#play-control").toggleClass("pause");
-    return $("#play-control").toggleClass("play");
+    if (tapPad.paused) {
+      $("#play-control").removeClass("pause");
+      $("#play-control").addClass("play");
+    } else {
+      $("#play-control").removeClass("play");
+      $("#play-control").addClass("pause");
+    }
+    return $("#play-control").show();
   };
   $("#play-control").on("click", function(e) {
     return playToggle();
