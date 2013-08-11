@@ -27,13 +27,8 @@
 				<footer class="wrapper">
 					<div class="container">
 						<div class="footer-content">
-							<h3 class="about">About Tap Pad</h3>
-							<p>Musicular automatons.</p>
-							<p>Made for Music Hack Day Toronto, 2013 by
-								<a href="{{ settings['creator_homepage'] }}">
-									{{ settings['creator'] }}
-								</a>.
-							</p>
+							{% block footer-content %}
+							{% end %}
 						</div>
 					</div>
 				</footer>

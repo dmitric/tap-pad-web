@@ -1,3 +1,20 @@
+#method to get xrsf cookie for posting via ajax
+getCookie = (name) ->
+  r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+  if r then r[1]
+
+#jquery wrapper to post json with xsrf
+$.postJson = (url, args, callback) ->
+  args._xsrf = getCookie "_xsrf"
+  $.ajax
+    url: url,
+    data: $.param(args),
+    dataType: "text",
+    type: "POST",
+    success: (response) ->
+      callback(eval "("+response+")")
+
+
 #simple id generator for our atoms
 class IdGenerator
   instance = null
@@ -65,13 +82,16 @@ class Atom
 		if @vertical
 			nY += @direction
 		nY
-	stringify: () ->
-		JSON.stringify {
+	
+	to_dict:() -> {
 			x: @x ,
 			y: @y,
 			vertical: @vertical,
 			direction: @direction 
 		}
+
+	stringify: () ->
+		JSON.stringify @to_dict() 
 
 class TapPad
 	constructor: (xMax, yMax) ->
@@ -201,7 +221,7 @@ class TapPad
 				@renderAtXandY i, j
 
 	stringify: () ->
-		JSON.stringify (atom.stringify() for atom in @atoms)			
+		JSON.stringify (atom.to_dict() for atom in @atoms)			
 
 	step: () ->
 		if !@paused and @atoms.length > 0
@@ -223,10 +243,14 @@ class TapPad
 			#render the colors
 			@render()
 
+	generateShareLink: (callback) ->
+		print 
+		$.postJson "/link", {"atoms": @stringify() }, callback
+
 #create a new 8x8 tap pad and attach it to the window
 window.tapPad = new TapPad 8,8			
 
-$ ->
+$ ->	
 	playToggle = () ->
 		tapPad.toggle()
 		if tapPad.paused
@@ -250,6 +274,11 @@ $ ->
 		y = +$(this).data "row"
 		x = +$(this).data "col"
 		tapPad.addAtom x, y
+
+	$("#generate-share-link").on "click", (e) ->
+		tapPad.generateShareLink (result) ->
+			$sl = $(".share-link")
+			$sl.val window.location.host + result["link"]
 
 	runLoop = () ->
 		tapPad.step()

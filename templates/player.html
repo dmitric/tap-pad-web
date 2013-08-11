@@ -18,16 +18,30 @@
 					</tr>
 				{% end %}
 			</table>
-			<br/>
 		</div>
-		<div class="container">
-			<button class="btn btn-outline btn-large" style="float:right">
-				Share link
+	</div>
+	<div class="wrapper share-wrapper">
+		<div class="container share-container">
+			<input onClick="this.select();" type="text" class="share-link">
+			<button id="generate-share-link" class="btn">
+			Generate share link
 			</button>
 		</div>
 	</div>
 {% end %}
 {% block more-header %}<div class="controls"><div id="play-control" class="play-control pause" style="display:none;"></div></div>{% end %}
+
+{% block footer-content %}
+<h3 class="about">About Tap Pad</h3>
+<p>Musicular automatons,<br>Them damn dancin' beepin' lights,<br>So much for being random.</p>
+<p>Shout out to Laplace's Demon.</p>
+<p>Made for Music Hack Day Toronto, 2013 by
+	<a href="{{ settings['creator_homepage'] }}">
+		{{ settings['creator'] }}
+	</a>.
+</p>
+{% end %}
+
 {% block custom-js %}
 <script>
 	Object.size = function(obj) {

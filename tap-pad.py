@@ -28,8 +28,9 @@ class TapPadApplication(tornado.web.Application):
             },
         }
         tornado.web.Application.__init__(self, [
-            tornado.web.url(r"/link/?", LinkGenerationHandler, name="link-gen"),
-            tornado.web.url(r"/([^/]*)/?", PadHandler, name="player"),
+            tornado.web.url(r"/link", LinkGenerationHandler, name="link-gen"),
+            tornado.web.url(r"/([^/]*)", PadHandler, name="player"),
+            tornado.web.url(r"/([^/]*)/?", PadHandler, name="slash-player")
         ], **settings)
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -65,16 +66,16 @@ class BaseHandler(tornado.web.RequestHandler):
 
   def generate_position_link(self, atoms):
     resulting_link = ""
+    if len(atoms) == 0 : return ""
     try:
       for atom in atoms:
-        print atom
         gen = "%d%d" % (atom["x"], atom["y"])
         if atom["vertical"]:
           gen = "%s%d" % (gen, 0 if atom["direction"] > 0 else 1) 
         else:
           gen = "%s%d" % (gen, 2 if atom["direction"] > 0 else 3)
         resulting_link = "%s%s" % (resulting_link, gen)
-    except e as Exception:
+    except Exception as e:
       pass
     return resulting_link
 
@@ -88,12 +89,14 @@ class LinkGenerationHandler(BaseHandler):
   def get(self):
     atoms = json_decode(self.get_argument("atoms", "[]"))
     resulting_link = self.generate_position_link(atoms)
-    self.redirect(self.reverse_url("player", resulting_link))
+    self.redirect(self.reverse_url("player", link) \
+      if link != "" else "/")
 
   def post(self):
     atoms = json_decode(self.get_argument("atoms", "[]"))
-    resulting_link = self.generate_position_link(atoms)
-    self.finish({"link": resulting_link})
+    link = self.generate_position_link(atoms)
+    self.finish({"link": self.reverse_url("player", link) \
+      if link != "" else "/"})
 
 
 class CSSModule(tornado.web.UIModule):

@@ -1,4 +1,23 @@
-var Atom, AudioSource, IdGenerator, TapPad;
+var Atom, AudioSource, IdGenerator, TapPad, getCookie;
+getCookie = function(name) {
+  var r;
+  r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+  if (r) {
+    return r[1];
+  }
+};
+$.postJson = function(url, args, callback) {
+  args._xsrf = getCookie("_xsrf");
+  return $.ajax({
+    url: url,
+    data: $.param(args),
+    dataType: "text",
+    type: "POST",
+    success: function(response) {
+      return callback(eval("(" + response + ")"));
+    }
+  });
+};
 IdGenerator = (function() {
   var PrivateClass, instance;
   function IdGenerator() {}
@@ -93,13 +112,16 @@ Atom = (function() {
     }
     return nY;
   };
-  Atom.prototype.stringify = function() {
-    return JSON.stringify({
+  Atom.prototype.to_dict = function() {
+    return {
       x: this.x,
       y: this.y,
       vertical: this.vertical,
       direction: this.direction
-    });
+    };
+  };
+  Atom.prototype.stringify = function() {
+    return JSON.stringify(this.to_dict());
   };
   return Atom;
 })();
@@ -294,7 +316,7 @@ TapPad = (function() {
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         atom = _ref[_i];
-        _results.push(atom.stringify());
+        _results.push(atom.to_dict());
       }
       return _results;
     }).call(this));
@@ -318,6 +340,11 @@ TapPad = (function() {
       }
       return this.render();
     }
+  };
+  TapPad.prototype.generateShareLink = function(callback) {
+    print;    return $.postJson("/link", {
+      "atoms": this.stringify()
+    }, callback);
   };
   return TapPad;
 })();
@@ -347,6 +374,13 @@ $(function() {
     y = +$(this).data("row");
     x = +$(this).data("col");
     return tapPad.addAtom(x, y);
+  });
+  $("#generate-share-link").on("click", function(e) {
+    return tapPad.generateShareLink(function(result) {
+      var $sl;
+      $sl = $(".share-link");
+      return $sl.val(window.location.host + result["link"]);
+    });
   });
   runLoop = function() {
     return tapPad.step();
