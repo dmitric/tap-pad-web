@@ -227,14 +227,6 @@ $ ->
 		#toggle the play state when we click the control
 		playToggle()
 
-	audio = document.getElementById('audio0')
-	button = document.getElementById('play-control')
-
-	onClick = () ->
-		audio.play()
-
-	button.addEventListener('click', onClick, false)
-
 	$(".player-button").on "click", (e) ->
 		#if we click a player-button, add a new atom to the pad
 		#at the position we clicked

@@ -302,7 +302,7 @@ TapPad = (function() {
 })();
 window.tapPad = new TapPad(8, 8);
 $(function() {
-  var audio, button, onClick, playToggle, runLoop;
+  var playToggle, runLoop;
   playToggle = function() {
     tapPad.toggle();
     $("#play-control").toggleClass("pause");
@@ -311,12 +311,6 @@ $(function() {
   $("#play-control").on("click", function(e) {
     return playToggle();
   });
-  audio = document.getElementById('audio0');
-  button = document.getElementById('play-control');
-  onClick = function() {
-    return audio.play();
-  };
-  button.addEventListener('click', onClick, false);
   $(".player-button").on("click", function(e) {
     var x, y;
     $("#play-control").show();
