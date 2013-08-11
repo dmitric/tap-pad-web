@@ -10,6 +10,7 @@ define("cookie_secret", default="music-hack-day")
 define("port", default=8080, type=int)
 define("creator", default="Dmitri Cherniak")
 define("creator_homepage", default="http://blog.zmitri.com")
+define("github_url", default="https://github.com/dmitric/tap-pad-web")
 
 
 class TapPadApplication(tornado.web.Application):
@@ -22,6 +23,7 @@ class TapPadApplication(tornado.web.Application):
             "debug": options.debug,
             "creator": options.creator,
             "creator_homepage": options.creator_homepage,
+            "github_url": options.github_url,
             "ui_modules": {
             	"CSSModule": CSSModule,
             	"JSModule": JSModule
