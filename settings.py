@@ -1,4 +1,4 @@
-debug=True
+debug=False
 cookie_secret="music-hack-day"
 port=8080
 creator = "Dmitri Cherniak"
