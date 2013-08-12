@@ -9,7 +9,7 @@
 	{% if theme %}
 	{% for i, clip in enumerate(theme.get("clips", [])) %}
 		<audio id="audio{{i}}" src="{{clip}}" preload="auto"></audio>
-		{% end %}
+	{% end %}
 	{% else %}
 		{% for note in xrange(0,8) %}
 		<audio id="audio{{note}}" src="http://s3.amazonaws.com/automatajs/{{note}}.wav" preload="auto"></audio>
@@ -33,7 +33,7 @@
 	</div>
 	<div class="wrapper share-wrapper">
 		<div class="container share-container">
-			<input onClick="this.select();" type="text" class="share-link">
+			<textarea class="share-link"></textarea>
 			<button id="generate-share-link" class="btn">
 			Generate share link
 			</button>
