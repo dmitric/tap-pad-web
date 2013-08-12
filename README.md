@@ -1,7 +1,7 @@
 tap-pad-web
 ===========
 
-Music Hackday Toronto 2013 - Web based tap pad.
+Music Hackday Toronto 2013 - Web based tap pad. (See native iOS version [here](http://github.com/dmitric/tap-pad-ios))
 
 Made by Dmitri Cherniak ([@dmitric](http://twitter.com/dmitric))
 
@@ -51,4 +51,4 @@ PS. I read somewhere that Torontonians are statistically more likely to enjoy Dr
 iOS version
 --------------
 
-There's also an iOS version [here](http://github.com/dmitric/tap-pad-ios)
+There's also a native iOS version [here](http://github.com/dmitric/tap-pad-ios)
