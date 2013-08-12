@@ -140,7 +140,7 @@ TapPad = (function() {
     for (i = 0, _ref = this.yMax; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
       this.grid[i] = [];
       for (j = 0, _ref2 = this.xMax; 0 <= _ref2 ? j <= _ref2 : j >= _ref2; 0 <= _ref2 ? j++ : j--) {
-        this.grid[i][j] = null;
+        this.grid[i][j] = {};
       }
     }
   }
@@ -156,9 +156,6 @@ TapPad = (function() {
       atom.direction = direction === 1 ? 1 : -1;
       atom.vertical = vertical === 1 ? true : false;
       this.atoms.push(atom);
-      if (this.grid[y][x] === null) {
-        this.grid[y][x] = {};
-      }
       this.grid[y][x]["" + atom.id] = atom;
       return this.renderAtXandY(x, y);
     }
@@ -176,32 +173,23 @@ TapPad = (function() {
     return !(x > this.xMax || x < 0 || y > this.yMax || y < 0);
   };
   TapPad.prototype.moveAtom = function(atom) {
-    var curX, curY, nextX, nextY;
-    curX = atom.x;
-    curY = atom.y;
+    var nextX, nextY;
     nextX = atom.nextX();
     nextY = atom.nextY();
+    delete this.grid[atom.y][atom.x]["" + atom.id];
     if (!this.isValidMove(nextX, nextY)) {
       atom.changeDirection();
       if (atom.vertical) {
-        this.player.play("audio" + curX);
+        this.player.play("audio" + atom.x);
       } else {
-        this.player.play("audio" + curY);
+        this.player.play("audio" + atom.y);
       }
     }
-    delete this.grid[curY][curX]["" + atom.id];
     atom.move();
-    curX = atom.x;
-    curY = atom.y;
-    if (this.grid[curY][curX] === null) {
-      this.grid[curY][curX] = {};
-    }
-    return this.grid[curY][curX]["" + atom.id] = atom;
+    return this.grid[atom.y][atom.x]["" + atom.id] = atom;
   };
   TapPad.prototype.manageHeadOnCollisions = function(atom) {
-    var curX, curY, diffDirection, nextX, nextY, otherAtom, otherAtomId, sameOrientation, _i, _len, _ref;
-    curX = atom.x;
-    curY = atom.y;
+    var diffDirection, nextX, nextY, otherAtom, otherAtomId, sameOrientation, _i, _len, _ref;
     nextX = atom.nextX();
     nextY = atom.nextY();
     if (this.isValidMove(nextX, nextY)) {
@@ -251,7 +239,7 @@ TapPad = (function() {
     var $cell, sizeOfCell;
     sizeOfCell = Object.size(this.grid[y][x]);
     $cell = $("#row" + y + "col" + x);
-    if (this.grid[y][x] === null || sizeOfCell === 0) {
+    if (sizeOfCell === 0) {
       $cell.removeClass("collision");
       return $cell.removeClass("single");
     } else if (sizeOfCell > 1) {
@@ -263,35 +251,18 @@ TapPad = (function() {
     }
   };
   TapPad.prototype.purgeOldAtoms = function() {
-    var atom, kill_off, _i, _len;
-    kill_off = (function() {
-      var _i, _len, _ref, _results;
-      _ref = this.atoms;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        atom = _ref[_i];
-        if (atom.collisions > this.collisonsLimit || atom.moves > this.movesLimit) {
-          _results.push(atom);
-        }
+    var atom, keep, _i, _len, _ref;
+    keep = [];
+    _ref = this.atoms;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      atom = _ref[_i];
+      if (atom.collisions > this.collisionsLimit || atom.moves > this.movesLimit) {
+        delete this.grid[atom.y][atom.x]["" + atom.id];
+      } else {
+        keep.push(atom);
       }
-      return _results;
-    }).call(this);
-    for (_i = 0, _len = kill_off.length; _i < _len; _i++) {
-      atom = kill_off[_i];
-      delete this.grid[atom.y][atom.x]["" + atom.id];
     }
-    return this.atoms = (function() {
-      var _j, _len2, _ref, _results;
-      _ref = this.atoms;
-      _results = [];
-      for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
-        atom = _ref[_j];
-        if (atom.collisions < this.collisonsLimit || atom.moves < this.movesLimit) {
-          _results.push(atom);
-        }
-      }
-      return _results;
-    }).call(this);
+    return this.atoms = keep;
   };
   TapPad.prototype.render = function() {
     var i, j, _ref, _results;
@@ -342,7 +313,7 @@ TapPad = (function() {
     }
   };
   TapPad.prototype.generateShareLink = function(callback) {
-    print;    return $.postJson("/link", {
+    return $.postJson("/link", {
       "atoms": this.stringify()
     }, callback);
   };
@@ -379,8 +350,12 @@ $(function() {
     return tapPad.generateShareLink(function(result) {
       var $sl;
       $sl = $(".share-link");
-      return $sl.val(window.location.host + result["link"]);
+      $sl.val(window.location.host + result["link"]);
+      return $sl.show();
     });
+  });
+  $(".share-link").on("click", function(e) {
+    return $(this).select();
   });
   runLoop = function() {
     return tapPad.step();
