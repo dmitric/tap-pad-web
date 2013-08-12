@@ -14,7 +14,6 @@ $.postJson = (url, args, callback) ->
     success: (response) ->
       callback(eval "("+response+")")
 
-
 #simple id generator for our atoms
 class IdGenerator
   instance = null
@@ -26,7 +25,6 @@ class IdGenerator
   @next: () ->
     instance ?= new PrivateClass()
     instance.next()
-
 
 #deals with all the audio playin'
 class AudioSource
@@ -278,11 +276,3 @@ $ ->
       playToggle()
 
   setInterval runLoop, tapPad.speed
-
-
-
-
-
-
-
-
