@@ -14,26 +14,28 @@ define("github_url", default="https://github.com/dmitric/tap-pad-web")
 
 
 class TapPadApplication(tornado.web.Application):
-    def __init__(self):
-        base_dir = os.path.dirname(__file__)
-        settings = {
-            "cookie_secret": options.cookie_secret,
-            "static_path": os.path.join(base_dir, "static"),
-            "template_path": os.path.join(base_dir, "templates"),
-            "debug": options.debug,
-            "creator": options.creator,
-            "creator_homepage": options.creator_homepage,
-            "github_url": options.github_url,
-            "ui_modules": {
-            	"CSSModule": CSSModule,
-            	"JSModule": JSModule
-            },
-        }
-        tornado.web.Application.__init__(self, [
-            tornado.web.url(r"/link", LinkGenerationHandler, name="link-gen"),
-            tornado.web.url(r"/([^/]*)", PadHandler, name="player"),
-            tornado.web.url(r"/([^/]*)/?", PadHandler, name="slash-player")
-        ], **settings)
+  def __init__(self):
+    base_dir = os.path.dirname(__file__)
+    settings = {
+      "cookie_secret": options.cookie_secret,
+      "static_path": os.path.join(base_dir, "static"),
+      "template_path": os.path.join(base_dir, "templates"),
+      'xsrf_cookies': True,
+      "debug": options.debug,
+      "creator": options.creator,
+      "creator_homepage": options.creator_homepage,
+      "github_url": options.github_url,
+      "ui_modules": {
+        "CSSModule": CSSModule,
+        "JSModule": JSModule
+      },
+    }
+    tornado.web.Application.__init__(self, [
+      tornado.web.url(r"/link", LinkGenerationHandler, name="link-gen"),
+      tornado.web.url(r"/link-for-mobile", MobileLinkGenerationHandler, name="mobile-link-gen"),
+      tornado.web.url(r"/([^/]*)", PadHandler, name="player"),
+      tornado.web.url(r"/([^/]*)/?", PadHandler, name="slash-player")
+    ], **settings)
 
 class BaseHandler(tornado.web.RequestHandler):
   def render_string(self, template, **kwargs):
@@ -81,7 +83,6 @@ class BaseHandler(tornado.web.RequestHandler):
       pass
     return resulting_link
 
-
 class PadHandler(BaseHandler):
   @tornado.web.removeslash
   def get(self, start_params=""):
@@ -105,19 +106,18 @@ class PadHandler(BaseHandler):
 
 class LinkGenerationHandler(BaseHandler):
   @tornado.web.removeslash
-  def get(self):
-    atoms = json_decode(self.get_argument("atoms", "[]"))
-    resulting_link = self.generate_position_link(atoms)
-    self.redirect(self.reverse_url("player", link) \
-      if link != "" else "")
-  
-  @tornado.web.removeslash
   def post(self):
+    self.finish({ "link": self.get_link("") })
+
+  def get_link(self, default="/"):
     atoms = json_decode(self.get_argument("atoms", "[]"))
     link = self.generate_position_link(atoms)
-    self.finish({"link": self.reverse_url("player", link) \
-      if link != "" else ""})
+    share_link = self.reverse_url("player", link) if link != "" else default
+    return share_link
 
+class MobileLinkGenerationHandler(LinkGenerationHandler):
+  def check_xsrf_cookie(self):
+    pass
 
 class CSSModule(tornado.web.UIModule):
   def render(self, urls):
@@ -130,15 +130,15 @@ class JSModule(tornado.web.UIModule):
       urls=urls)
 
 def main():
-    tornado.options.parse_command_line()
-    if options.config:
-        tornado.options.parse_config_file(options.config)
-    else:
-        path = os.path.join(os.path.dirname(__file__), "settings.py")
-        tornado.options.parse_config_file(path)
-    TapPadApplication().listen(os.environ.get("PORT", options.port))
-    tornado.ioloop.IOLoop.instance().start()
-
+  if options.config:
+    tornado.options.parse_config_file(options.config)
+  else:
+    path = os.path.join(os.path.dirname(__file__), "settings.py")
+    tornado.options.parse_config_file(path)
+  tornado.options.parse_command_line()
+  
+  TapPadApplication().listen(os.environ.get("PORT", options.port))
+  tornado.ioloop.IOLoop.instance().start()
 
 if __name__ == "__main__":
-    main()
+  main()
