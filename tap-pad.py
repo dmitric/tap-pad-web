@@ -101,9 +101,6 @@ class PadHandler(BaseHandler):
         }
     pos = [ create_atom_dict(a) for a in pos]
     self.finish({"atoms": pos })
-  
-  def check_xsrf_cookie(self):
-    pass
 
 class LinkGenerationHandler(BaseHandler):
   @tornado.web.removeslash
