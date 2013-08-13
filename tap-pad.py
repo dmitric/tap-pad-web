@@ -132,7 +132,7 @@ class JSModule(tornado.web.UIModule):
     return self.render_string("ui-modules/js-module.html",
       urls=urls)
 
-def parse_options(self):
+def parse_options():
   """
   Parse command line or options set in settings.py config file
   """
@@ -144,7 +144,7 @@ def parse_options(self):
   tornado.options.parse_command_line()
 
 def main():
-  self.parse_options()
+  parse_options()
   TapPadApplication().listen(os.environ.get("PORT", options.port))
   tornado.ioloop.IOLoop.instance().start()
 
