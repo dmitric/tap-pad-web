@@ -88,6 +88,22 @@ class PadHandler(BaseHandler):
   def get(self, start_params=""):
     start_position = self.parse_position(start_params)
     self.render("player.html", start_position=start_position)
+  
+  @tornado.web.removeslash
+  def post(self, start_params=""):
+    pos = self.parse_position(start_params)
+    def create_atom_dict(array):
+      return {
+        "x": int(a[0]),
+        "y": int(a[1]),
+        "vertical": int(a[3]),
+        "direction": int(a[2])
+        }
+    pos = [ create_atom_dict(a) for a in pos]
+    self.finish({"atoms": pos })
+  
+  def check_xsrf_cookie(self):
+    pass
 
 class LinkGenerationHandler(BaseHandler):
   @tornado.web.removeslash
