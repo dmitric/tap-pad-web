@@ -113,8 +113,8 @@ class MobileGridHandler(BaseHandler):
       return {
         "x": int(a[0]),
         "y": int(a[1]),
-        "vertical": int(a[3]),
         "direction": int(a[2])
+        "vertical": int(a[3]),
         }
     pos = [ create_atom_dict(a) for a in pos]
     self.finish({"atoms": pos })
@@ -132,14 +132,19 @@ class JSModule(tornado.web.UIModule):
     return self.render_string("ui-modules/js-module.html",
       urls=urls)
 
-def main():
+def parse_options(self):
+  """
+  Parse command line or options set in settings.py config file
+  """
   if options.config:
     tornado.options.parse_config_file(options.config)
   else:
     path = os.path.join(os.path.dirname(__file__), "settings.py")
     tornado.options.parse_config_file(path)
   tornado.options.parse_command_line()
-  
+
+def main():
+  self.parse_options()
   TapPadApplication().listen(os.environ.get("PORT", options.port))
   tornado.ioloop.IOLoop.instance().start()
 
