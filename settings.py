@@ -1,5 +1,5 @@
 debug=False
-cookie_secret="music-hack-day"
+cookie_secret="music-hack-day-2"
 port=8080
 creator = "Dmitri Cherniak"
 creator_homepage ="http://blog.zmitri.com"

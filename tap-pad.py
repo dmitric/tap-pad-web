@@ -6,7 +6,7 @@ from tornado.escape import json_decode
 
 define("config")
 define("debug", default=False)
-define("cookie_secret", default="music-hack-day")
+define("cookie_secret", default="music-hack-day-2")
 define("port", default=8080, type=int)
 define("creator", default="Dmitri Cherniak")
 define("creator_homepage", default="http://blog.zmitri.com")
@@ -116,9 +116,6 @@ class PadHandler(BaseHandler):
         }
     pos = [ create_atom_dict(a) for a in pos]
     self.finish({"atoms": pos })
-  
-  def check_xsrf_cookie(self):
-    pass
 
 class LinkGenerationHandler(BaseHandler):
   @tornado.web.removeslash
