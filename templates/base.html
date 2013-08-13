@@ -2,8 +2,16 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<meta name="author" content="">
+		<link rel="icon" href="{{ static_url("favicon.ico") }}" type="image/x-icon">
+		<link rel="shortcut icon" href="{{ static_url("favicon.ico") }}" type="image/x-icon">
+		<meta name="author" content="Tap Pad">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+		<meta property="og:title" content="Tap Pad">
+		<meta property="og:type" content="website">
+		<meta property="og:url" content="http://tap-pad.herokuapp.com">
+		<meta property="og:site_name" content="Tap Pad">
+		<meta property="og:description" content="Are we just automatons that make beautiful music? Listen to this.">
+		
 		<title>{% block title %}Tap Pad by {{ settings["creator"] }}{% end %}</title>
 		{% module CSSModule([
 			static_url("css/bootstrap.min.css"),
