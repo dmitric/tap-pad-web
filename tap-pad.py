@@ -113,8 +113,8 @@ class MobileGridHandler(BaseHandler):
       return {
         "x": int(a[0]),
         "y": int(a[1]),
-        "direction": int(a[2])
-        "vertical": int(a[3]),
+        "direction": int(a[2]),
+        "vertical": int(a[3])
         }
     pos = [ create_atom_dict(a) for a in pos]
     self.finish({"atoms": pos })
