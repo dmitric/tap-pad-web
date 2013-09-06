@@ -6,7 +6,7 @@ from tornado.escape import json_decode
 
 define("config")
 define("debug", default=False)
-define("cookie_secret", default="music-hack-day-2")
+define("cookie_secret", default="music-hack-day")
 define("port", default=8080, type=int)
 define("creator", default="Dmitri Cherniak")
 define("creator_homepage", default="http://blog.zmitri.com")
@@ -88,22 +88,7 @@ class PadHandler(BaseHandler):
   @tornado.web.removeslash
   def get(self, start_params=""):
     start_position = self.parse_position(start_params)
-    theme = None
-    if start_params == "drake":
-      theme = {
-        "name": "Drake",
-        "clips": [
-          "http://www.therapboard.com/audio/drake_2.mp3",
-          "http://www.therapboard.com/audio/drake_3.mp3",
-          "http://www.therapboard.com/audio/drake_4.mp3",
-          "http://www.therapboard.com/audio/drake_5.mp3",
-          "http://www.therapboard.com/audio/weezy_14.mp3",
-          "http://www.therapboard.com/audio/weezy_29.mp3",
-          "http://www.therapboard.com/audio/weezy_16.mp3",
-          "http://www.therapboard.com/audio/weezy_25.mp3"
-          ]
-      }
-    self.render("player.html", theme=theme, start_position=start_position)
+    self.render("player.html", start_position=start_position)
 
 class LinkGenerationHandler(BaseHandler):
   @tornado.web.removeslash
