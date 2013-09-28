@@ -7,7 +7,7 @@ from tornado.escape import json_decode
 define("config")
 define("debug", default=False)
 define("cookie_secret", default="music-hack-day")
-define("port", default=8080, type=int)
+define("port", default=5000, type=int)
 define("creator", default="Dmitri Cherniak")
 define("creator_homepage", default="http://blog.zmitri.com")
 define("github_url", default="https://github.com/dmitric/tap-pad-web")
@@ -144,6 +144,7 @@ def parse_options():
   tornado.options.parse_command_line()
 
 def main():
+  print "Running Tap Pad"
   parse_options()
   TapPadApplication().listen(os.environ.get("PORT", options.port))
   tornado.ioloop.IOLoop.instance().start()
