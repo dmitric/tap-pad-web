@@ -144,6 +144,7 @@ def parse_options():
   tornado.options.parse_command_line()
 
 def main():
+  print "Running Tap Pad"
   parse_options()
   TapPadApplication().listen(os.environ.get("PORT", options.port))
   tornado.ioloop.IOLoop.instance().start()
